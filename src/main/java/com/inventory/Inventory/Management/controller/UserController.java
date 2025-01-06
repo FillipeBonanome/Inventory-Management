@@ -1,5 +1,6 @@
 package com.inventory.Inventory.Management.controller;
 
+import com.inventory.Inventory.Management.dto.ProductDTO;
 import com.inventory.Inventory.Management.dto.UserDTO;
 import com.inventory.Inventory.Management.repository.UserRepository;
 import com.inventory.Inventory.Management.service.UserService;
@@ -11,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/users")
@@ -38,6 +41,12 @@ public class UserController {
     public ResponseEntity<Page<UserDTO>> getActiveUsers(@PageableDefault(size = 10, sort = {"name"}) Pageable pageable) {
         Page<UserDTO> page = userService.getActiveUsers(pageable);
         return ResponseEntity.ok(page);
+    }
+
+    @GetMapping("/{id}/products")
+    public ResponseEntity<List<ProductDTO>> getUsersProduct(@PathVariable Long id) {
+        List<ProductDTO> productList = userService.getUsersProducts(id);
+        return ResponseEntity.ok(productList);
     }
 
     @PostMapping

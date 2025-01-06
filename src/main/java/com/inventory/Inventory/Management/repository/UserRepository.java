@@ -1,6 +1,7 @@
 package com.inventory.Inventory.Management.repository;
 
 import com.inventory.Inventory.Management.domain.User;
+import com.inventory.Inventory.Management.dto.ProductDTO;
 import com.inventory.Inventory.Management.dto.UserDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

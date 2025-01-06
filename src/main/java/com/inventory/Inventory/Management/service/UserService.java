@@ -1,8 +1,10 @@
 package com.inventory.Inventory.Management.service;
 
 import com.inventory.Inventory.Management.domain.User;
+import com.inventory.Inventory.Management.dto.ProductDTO;
 import com.inventory.Inventory.Management.dto.UserDTO;
 import com.inventory.Inventory.Management.infra.exceptions.UserException;
+import com.inventory.Inventory.Management.repository.ProductRepository;
 import com.inventory.Inventory.Management.repository.UserRepository;
 import com.inventory.Inventory.Management.validation.UserValidation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,9 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private ProductRepository productRepository;
 
     @Autowired
     List<UserValidation> userValidationList;
@@ -122,5 +127,9 @@ public class UserService {
 
     public Page<UserDTO> getActiveUsers(Pageable pageable) {
         return userRepository.findAllByActiveTrue(pageable).map(UserDTO::new);
+    }
+
+    public List<ProductDTO> getUsersProducts(Long id) {
+        return productRepository.findAllByUserId(id).stream().map(ProductDTO::new).toList();
     }
 }

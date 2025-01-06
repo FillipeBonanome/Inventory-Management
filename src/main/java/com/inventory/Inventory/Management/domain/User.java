@@ -8,6 +8,7 @@ import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -21,27 +22,30 @@ import java.util.List;
 public class User implements UserDetails {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    private Long id;
 
     @Column(unique = true)
     @NotBlank
-    String login;
+    private String login;
 
     @NotBlank
-    String password;
+    private String password;
 
     @NotBlank
-    String name;
+    private String name;
 
     @Column(unique = true)
     @Email
-    String email;
+    private String email;
 
     @Column(unique = true)
     @NotBlank
-    String cpf;
+    private String cpf;
 
     boolean active;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Product> productList = new ArrayList<>();
 
     public User() {}
 
@@ -62,6 +66,14 @@ public class User implements UserDetails {
         this.password = userDTO.password();
         this.name = userDTO.name();
         this.active = userDTO.active();
+    }
+
+    public List<Product> getProductList() {
+        return productList;
+    }
+
+    public void setProductList(List<Product> productList) {
+        this.productList = productList;
     }
 
     public boolean isActive() {
