@@ -6,6 +6,8 @@ import com.inventory.Inventory.Management.infra.exceptions.UserException;
 import com.inventory.Inventory.Management.repository.UserRepository;
 import com.inventory.Inventory.Management.validation.UserValidation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -114,4 +116,11 @@ public class UserService {
         return new UserDTO(userReference);
     }
 
+    public Page<UserDTO> getUsers(Pageable pageable) {
+        return userRepository.findAll(pageable).map(UserDTO::new);
+    }
+
+    public Page<UserDTO> getActiveUsers(Pageable pageable) {
+        return userRepository.findAllByActiveTrue(pageable).map(UserDTO::new);
+    }
 }
