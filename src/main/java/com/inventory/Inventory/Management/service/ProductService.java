@@ -28,6 +28,10 @@ public class ProductService {
             throw new ProductException("User not found for this product");
         }
 
+        if (!user.get().isActive()) {
+            throw new ProductException("User is not active");
+        }
+
         Product product = new Product(productDTO.id(), productDTO.name(), productDTO.quantity(), productDTO.description(), user.get());
         Product savedProduct = productRepository.save(product);
         return new ProductDTO(savedProduct);
