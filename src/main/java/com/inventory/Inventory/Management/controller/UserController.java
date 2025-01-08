@@ -3,17 +3,24 @@ package com.inventory.Inventory.Management.controller;
 import com.inventory.Inventory.Management.dto.ProductDTO;
 import com.inventory.Inventory.Management.dto.UserDTO;
 import com.inventory.Inventory.Management.repository.UserRepository;
+import com.inventory.Inventory.Management.service.SpreadsheetReportService;
 import com.inventory.Inventory.Management.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/users")
@@ -24,6 +31,9 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private SpreadsheetReportService spreadsheetReportService;
 
     @GetMapping
     public ResponseEntity<Page<UserDTO>> getUserList(@PageableDefault(size = 10, sort = {"name"}) Pageable pageable) {
@@ -75,6 +85,13 @@ public class UserController {
     public ResponseEntity<UserDTO> restoreUser(@PathVariable Long id) {
         UserDTO restoredUser = userService.restoreUserById(id);
         return ResponseEntity.ok(restoredUser);
+    }
+
+    @GetMapping("/{id}/download-products")
+    public ResponseEntity<String> downloadProductList(@PathVariable Long id) throws IOException {
+        spreadsheetReportService.generateSpreadsheetReport(id);
+        return ResponseEntity.ok().build();
+
     }
 
 }

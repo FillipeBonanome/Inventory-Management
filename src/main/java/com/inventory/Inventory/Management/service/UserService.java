@@ -10,6 +10,7 @@ import com.inventory.Inventory.Management.validation.UserValidation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +28,9 @@ public class UserService {
 
     @Autowired
     private ProductRepository productRepository;
+
+    @Autowired
+    private SpreadsheetReportService spreadsheetReportService;
 
     @Autowired
     List<UserValidation> userValidationList;
@@ -132,4 +136,5 @@ public class UserService {
     public List<ProductDTO> getUsersProducts(Long id) {
         return productRepository.findAllByUserId(id).stream().map(ProductDTO::new).toList();
     }
+
 }
