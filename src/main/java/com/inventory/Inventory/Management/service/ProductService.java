@@ -32,7 +32,7 @@ public class ProductService {
             throw new ProductException("User is not active");
         }
 
-        Product product = new Product(productDTO.id(), productDTO.name(), productDTO.quantity(), productDTO.description(), user.get());
+        Product product = new Product(productDTO.id(), productDTO.name(), productDTO.quantity(), productDTO.description(), user.get(), productDTO.price());
         Product savedProduct = productRepository.save(product);
         return new ProductDTO(savedProduct);
     }
@@ -59,4 +59,28 @@ public class ProductService {
 
     }
 
+    public ProductDTO updateProduct(Long id, ProductDTO productDTO) {
+        Optional<Product> existingProduct = productRepository.findById(id);
+
+        if (existingProduct.isEmpty()) {
+            throw new ProductException("Product not found");
+        }
+
+        Optional<User> existingUser = userRepository.findById(id);
+
+        if (existingUser.isEmpty()) {
+            throw new ProductException("User not found");
+        }
+
+        Product product = productRepository.getReferenceById(id);
+        User user = userRepository.getReferenceById(id);
+
+        product.setName(productDTO.name());
+        product.setDescription(productDTO.description());
+        product.setPrice(productDTO.price());
+        product.setUser(user);
+        product.setQuantity(productDTO.quantity());
+
+        return new ProductDTO(product);
+    }
 }

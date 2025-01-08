@@ -27,15 +27,28 @@ public class Product {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @NotNull
+    private double price;
+
     public Product() {
     }
 
-    public Product(Long id, String name, int quantity, String description, User user) {
+    public Product(Long id, String name, int quantity, String description, User user, double price) {
         this.id = id;
         this.name = name;
         this.quantity = quantity;
         this.description = description;
         this.user = user;
+        this.price = price;
+    }
+
+    @NotNull
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(@NotNull double price) {
+        this.price = price;
     }
 
     public Long getId() {

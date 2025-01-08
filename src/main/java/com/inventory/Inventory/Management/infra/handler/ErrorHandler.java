@@ -2,6 +2,7 @@ package com.inventory.Inventory.Management.infra.handler;
 
 import com.inventory.Inventory.Management.dto.ExceptionDTO;
 import com.inventory.Inventory.Management.infra.exceptions.ProductException;
+import com.inventory.Inventory.Management.infra.exceptions.StockTransactionException;
 import com.inventory.Inventory.Management.infra.exceptions.UserException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -18,6 +19,11 @@ public class ErrorHandler {
     @ExceptionHandler(ProductException.class)
     public ResponseEntity<ExceptionDTO> handleProductException(ProductException productException) {
         return ResponseEntity.badRequest().body(new ExceptionDTO(productException.getMessage()));
+    }
+
+    @ExceptionHandler(StockTransactionException.class)
+    public ResponseEntity<ExceptionDTO> handleTransactionException(StockTransactionException transactionException) {
+        return ResponseEntity.badRequest().body(new ExceptionDTO(transactionException.getMessage()));
     }
 
 }

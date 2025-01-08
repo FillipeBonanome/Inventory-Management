@@ -7,11 +7,12 @@ public record ProductDTO(
         String name,
         int quantity,
         String description,
-        Long userId
+        Long userId,
+        double price
 ) {
 
     public ProductDTO(Product product) {
-        this(product.getId(), product.getName(), product.getQuantity(), product.getDescription(), product.getUser().getId());
+        this(product.getId(), product.getName(), product.getQuantity(), product.getDescription(), product.getUser().getId(), product.getPrice());
     }
 
 }
