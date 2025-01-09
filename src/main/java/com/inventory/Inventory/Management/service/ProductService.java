@@ -73,12 +73,10 @@ public class ProductService {
         }
 
         Product product = productRepository.getReferenceById(id);
-        User user = userRepository.getReferenceById(id);
 
         product.setName(productDTO.name());
         product.setDescription(productDTO.description());
         product.setPrice(productDTO.price());
-        product.setUser(user);
         product.setQuantity(productDTO.quantity());
 
         return new ProductDTO(product);

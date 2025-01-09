@@ -2,9 +2,11 @@ package com.inventory.Inventory.Management.service;
 
 import com.inventory.Inventory.Management.domain.User;
 import com.inventory.Inventory.Management.dto.ProductDTO;
+import com.inventory.Inventory.Management.dto.StockTransactionDTO;
 import com.inventory.Inventory.Management.dto.UserDTO;
 import com.inventory.Inventory.Management.infra.exceptions.UserException;
 import com.inventory.Inventory.Management.repository.ProductRepository;
+import com.inventory.Inventory.Management.repository.StockTransactionRepository;
 import com.inventory.Inventory.Management.repository.UserRepository;
 import com.inventory.Inventory.Management.validation.UserValidation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +37,9 @@ public class UserService {
     @Autowired
     List<UserValidation> userValidationList;
 
+    @Autowired
+    private StockTransactionRepository stockTransactionRepository;
+
     public UserDTO registerUser(UserDTO userDTO) {
 
         //Chain of Responsibility
@@ -57,6 +62,7 @@ public class UserService {
         User user = new User(userDTO);
         String encodedPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(encodedPassword);
+        user.setActive(true);
         User savedUser = userRepository.save(user);
         return new UserDTO(savedUser);
 
@@ -137,4 +143,7 @@ public class UserService {
         return productRepository.findAllByUserId(id).stream().map(ProductDTO::new).toList();
     }
 
+    public List<StockTransactionDTO> getUsersTransactions(Long id) {
+        return stockTransactionRepository.findAllByUserId(id).stream().map(StockTransactionDTO::new).toList();
+    }
 }

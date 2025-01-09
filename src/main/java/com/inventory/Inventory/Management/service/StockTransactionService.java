@@ -2,13 +2,17 @@ package com.inventory.Inventory.Management.service;
 
 import com.inventory.Inventory.Management.domain.Product;
 import com.inventory.Inventory.Management.domain.StockTransaction;
+import com.inventory.Inventory.Management.domain.TransactionType;
+import com.inventory.Inventory.Management.domain.User;
 import com.inventory.Inventory.Management.dto.StockTransactionDTO;
 import com.inventory.Inventory.Management.infra.exceptions.StockTransactionException;
 import com.inventory.Inventory.Management.repository.ProductRepository;
 import com.inventory.Inventory.Management.repository.StockTransactionRepository;
+import com.inventory.Inventory.Management.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -19,6 +23,9 @@ public class StockTransactionService {
 
     @Autowired
     private ProductRepository productRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     public StockTransactionDTO getTransactionById(Long id) {
         Optional<StockTransaction> transaction = stockTransactionRepository.findById(id);
@@ -37,21 +44,49 @@ public class StockTransactionService {
             throw new StockTransactionException("Product not found");
         }
 
+        Optional<User> existingUser = userRepository.findById(transactionDTO.userId());
+
+        if (existingUser.isEmpty()) {
+            throw new StockTransactionException("User not found");
+        }
+
+        User user = userRepository.getReferenceById(transactionDTO.userId());
+
         Product product = productRepository.getReferenceById(transactionDTO.productId());
 
-        if (transactionDTO.quantity() < 0 && Math.abs(transactionDTO.quantity()) > product.getQuantity()) {
+        if (!user.isActive()) {
+            throw new StockTransactionException("User is not active");
+        }
+
+        if (!Objects.equals(user.getId(), product.getUser().getId())) {
+            throw new StockTransactionException("You don't have this product");
+        }
+
+        int multiplier = 1;
+
+        //Only outbound for now
+        if (transactionDTO.type() == TransactionType.OUTBOUND) {
+            multiplier = -1;
+        }
+
+        if (Math.abs(transactionDTO.quantity()) > product.getQuantity() && multiplier == -1) {
             throw new StockTransactionException("Product quantity insufficient");
         }
 
+        double totalValue = Math.abs(product.getPrice() * transactionDTO.quantity());
+
+
         StockTransaction stockTransaction = new StockTransaction(null,
                 product,
-                transactionDTO.quantity(),
+                transactionDTO.quantity() * multiplier,
                 transactionDTO.date(),
-                transactionDTO.type()
+                transactionDTO.type(),
+                totalValue * multiplier,
+                user
         );
 
         StockTransaction savedTransition = stockTransactionRepository.save(stockTransaction);
-        product.setQuantity(product.getQuantity() + transactionDTO.quantity());
+        product.setQuantity(product.getQuantity() + transactionDTO.quantity() * multiplier);
 
         return new StockTransactionDTO(savedTransition);
     }

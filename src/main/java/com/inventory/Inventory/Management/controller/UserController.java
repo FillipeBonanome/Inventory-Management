@@ -1,18 +1,15 @@
 package com.inventory.Inventory.Management.controller;
 
 import com.inventory.Inventory.Management.dto.ProductDTO;
+import com.inventory.Inventory.Management.dto.StockTransactionDTO;
 import com.inventory.Inventory.Management.dto.UserDTO;
 import com.inventory.Inventory.Management.repository.UserRepository;
 import com.inventory.Inventory.Management.service.SpreadsheetReportService;
 import com.inventory.Inventory.Management.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +17,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Objects;
 
 @RestController
 @RequestMapping("/users")
@@ -59,6 +55,12 @@ public class UserController {
         return ResponseEntity.ok(productList);
     }
 
+    @GetMapping("/{id}/transactions")
+    public ResponseEntity<List<StockTransactionDTO>> getUsersTransactions(@PathVariable Long id) {
+        List<StockTransactionDTO> transactionList = userService.getUsersTransactions(id);
+        return ResponseEntity.ok(transactionList);
+    }
+
     @PostMapping
     @Transactional
     public ResponseEntity<UserDTO> registerUser(@RequestBody UserDTO userDTO, UriComponentsBuilder builder) {
@@ -89,9 +91,14 @@ public class UserController {
 
     @GetMapping("/{id}/download-products")
     public ResponseEntity<String> downloadProductList(@PathVariable Long id) throws IOException {
-        spreadsheetReportService.generateSpreadsheetReport(id);
+        spreadsheetReportService.generateSpreadsheetProductReport(id);
         return ResponseEntity.ok().build();
+    }
 
+    @GetMapping("/{id}/download-transactions")
+    public ResponseEntity<String> downloadTransacionList(@PathVariable Long id) throws IOException {
+        spreadsheetReportService.generateSpreadsheetTransactionReport(id);
+        return ResponseEntity.ok().build();
     }
 
 }

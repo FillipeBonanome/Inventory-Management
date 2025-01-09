@@ -47,6 +47,9 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Product> productList = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<StockTransaction> stockTransactions = new ArrayList<>();
+
     public User() {}
 
     public User(Long id, String login, String password, String name, String email, String cpf, boolean active) {
@@ -66,6 +69,18 @@ public class User implements UserDetails {
         this.password = userDTO.password();
         this.name = userDTO.name();
         this.active = userDTO.active();
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public List<StockTransaction> getStockTransactions() {
+        return stockTransactions;
+    }
+
+    public void setStockTransactions(List<StockTransaction> stockTransactions) {
+        this.stockTransactions = stockTransactions;
     }
 
     public List<Product> getProductList() {

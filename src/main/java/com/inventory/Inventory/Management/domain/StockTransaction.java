@@ -24,18 +24,41 @@ public class StockTransaction {
     @NotNull
     private int quantity;
     private LocalDate transactionDate;
+
     @Enumerated(EnumType.STRING)
     private TransactionType transactionType;
     private double transactionValue;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private User user;
+
     public StockTransaction() {}
 
-    public StockTransaction(Long id, Product product, int quantity, LocalDate transactionDate, TransactionType transactionType) {
+    public StockTransaction(Long id, Product product, int quantity, LocalDate transactionDate, TransactionType transactionType, double transactionValue, User user) {
         this.id = id;
         this.product = product;
         this.quantity = quantity;
         this.transactionDate = transactionDate;
         this.transactionType = transactionType;
+        this.transactionValue = transactionValue;
+        this.user = user;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public double getTransactionValue() {
+        return transactionValue;
+    }
+
+    public void setTransactionValue(double transactionValue) {
+        this.transactionValue = transactionValue;
     }
 
     public Long getId() {
@@ -78,4 +101,5 @@ public class StockTransaction {
     public void setTransactionType(TransactionType transactionType) {
         this.transactionType = transactionType;
     }
+    
 }

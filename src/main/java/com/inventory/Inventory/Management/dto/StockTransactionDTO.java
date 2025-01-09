@@ -19,9 +19,13 @@ public record StockTransactionDTO(
         @Past
         LocalDate date,
         @NotBlank
-        TransactionType type
+        TransactionType type,
+        @NotNull
+        double value,
+        @NotNull
+        Long userId
 ) {
     public StockTransactionDTO(StockTransaction transaction) {
-        this(transaction.getId(), transaction.getProduct().getId(), transaction.getQuantity(), transaction.getTransactionDate(), transaction.getTransactionType());
+        this(transaction.getId(), transaction.getProduct().getId(), transaction.getQuantity(), transaction.getTransactionDate(), transaction.getTransactionType(), transaction.getTransactionValue(), transaction.getUser().getId());
     }
 }
