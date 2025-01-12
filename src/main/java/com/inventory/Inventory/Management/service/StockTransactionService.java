@@ -4,12 +4,16 @@ import com.inventory.Inventory.Management.domain.Product;
 import com.inventory.Inventory.Management.domain.StockTransaction;
 import com.inventory.Inventory.Management.domain.TransactionType;
 import com.inventory.Inventory.Management.domain.User;
+import com.inventory.Inventory.Management.dto.ProductDTO;
 import com.inventory.Inventory.Management.dto.StockTransactionDTO;
 import com.inventory.Inventory.Management.infra.exceptions.StockTransactionException;
 import com.inventory.Inventory.Management.repository.ProductRepository;
 import com.inventory.Inventory.Management.repository.StockTransactionRepository;
 import com.inventory.Inventory.Management.repository.UserRepository;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
@@ -26,6 +30,9 @@ public class StockTransactionService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
 
     public StockTransactionDTO getTransactionById(Long id) {
         Optional<StockTransaction> transaction = stockTransactionRepository.findById(id);
@@ -87,6 +94,14 @@ public class StockTransactionService {
 
         StockTransaction savedTransition = stockTransactionRepository.save(stockTransaction);
         product.setQuantity(product.getQuantity() + transactionDTO.quantity() * multiplier);
+
+        if (product.getQuantity() < product.getMinQuantity()) {
+            //Sending RabbitMQ Message to Queue
+            System.out.println("Sending rabbitMQ message");
+            Message message = new Message(("Stock of " + product.getName() + " is lower than " + product.getMinQuantity() + " item(s)").getBytes());
+            ProductDTO productDTO = new ProductDTO(product);
+            rabbitTemplate.convertAndSend("stock.low", productDTO);
+        }
 
         return new StockTransactionDTO(savedTransition);
     }

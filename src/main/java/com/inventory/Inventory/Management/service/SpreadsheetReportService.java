@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -74,7 +75,7 @@ public class SpreadsheetReportService {
         header.createCell(2).setCellValue("QUANTITY");
         header.createCell(3).setCellValue("VALUE");
         header.createCell(4).setCellValue("TYPE");
-        
+
         sheet.setColumnWidth(1, 6000);
         sheet.setColumnWidth(2, 6000);
         sheet.setColumnWidth(3, 6000);
@@ -92,15 +93,14 @@ public class SpreadsheetReportService {
             rowStart++;
         }
 
-        String fileName = "transactions";
-
-        try (FileOutputStream fileOut = new FileOutputStream(fileName + ".xlsx")) {
+        String fileName = "transactions ";
+        LocalDate date = LocalDate.now();
+        String dateFormat = date.toString();
+        try (FileOutputStream fileOut = new FileOutputStream(fileName + dateFormat + ".xlsx")) {
             workbook.write(fileOut);
             workbook.close();
         } catch (IOException e) {
             throw new StockTransactionException("Error saving spreadsheet");
         }
     }
-
-
 }

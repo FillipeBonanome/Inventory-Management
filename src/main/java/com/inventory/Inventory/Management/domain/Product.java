@@ -30,16 +30,29 @@ public class Product {
     @NotNull
     private double price;
 
+    @NotNull
+    private int minQuantity;
+
     public Product() {
     }
 
-    public Product(Long id, String name, int quantity, String description, User user, double price) {
+    public Product(Long id, String name, int quantity, String description, User user, double price, int minQuantity) {
         this.id = id;
         this.name = name;
         this.quantity = quantity;
         this.description = description;
         this.user = user;
         this.price = price;
+        this.minQuantity = minQuantity;
+    }
+
+    @NotNull
+    public int getMinQuantity() {
+        return minQuantity;
+    }
+
+    public void setMinQuantity(@NotNull int minQuantity) {
+        this.minQuantity = minQuantity;
     }
 
     @NotNull

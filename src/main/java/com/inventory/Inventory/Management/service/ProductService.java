@@ -32,7 +32,7 @@ public class ProductService {
             throw new ProductException("User is not active");
         }
 
-        Product product = new Product(productDTO.id(), productDTO.name(), productDTO.quantity(), productDTO.description(), user.get(), productDTO.price());
+        Product product = new Product(productDTO.id(), productDTO.name(), productDTO.quantity(), productDTO.description(), user.get(), productDTO.price(), productDTO.minQuantity());
         Product savedProduct = productRepository.save(product);
         return new ProductDTO(savedProduct);
     }

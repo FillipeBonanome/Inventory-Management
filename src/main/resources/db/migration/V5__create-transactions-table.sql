@@ -6,5 +6,4 @@ create table transactions(
     transaction_type varchar(100) not null,
 
     constraint fk_product foreign key(product_id) references products(id)
-
 );
