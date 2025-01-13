@@ -20,6 +20,11 @@ public class LowStockAMQPConfiguration {
     }
 
     @Bean
+    public Queue createScheduleReportQueue() {
+        return QueueBuilder.nonDurable("reportQueue").build();
+    }
+
+    @Bean
     public RabbitAdmin createRabbitAdmin(ConnectionFactory connectionFactory) {
         return new RabbitAdmin(connectionFactory);
     }
