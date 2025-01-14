@@ -16,6 +16,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.Year;
+import java.time.YearMonth;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -42,6 +46,13 @@ public class StockTransactionService {
         }
 
         return new StockTransactionDTO(transaction.get());
+    }
+
+    public List<StockTransactionDTO> getTransactionByMonthNumber(int number) {
+        var year = 2020;
+        YearMonth month = YearMonth.of(year, number);
+        List<StockTransaction> transactions = stockTransactionRepository.findTransactionByInterval(month.atDay(1), month.atEndOfMonth());
+        return transactions.stream().map(StockTransactionDTO::new).toList();
     }
 
     public StockTransactionDTO registerTransaction(StockTransactionDTO transactionDTO) {
@@ -106,5 +117,9 @@ public class StockTransactionService {
         return new StockTransactionDTO(savedTransition);
     }
 
-
+    public List<StockTransactionDTO> getTransactionByYear(int year) {
+        Year selectedYear = Year.of(year);
+        List<StockTransaction> transactions = stockTransactionRepository.findTransactionByInterval(selectedYear.atMonth(1).atDay(1), selectedYear.atMonth(12).atEndOfMonth());
+        return transactions.stream().map(StockTransactionDTO::new).toList();
+    }
 }
